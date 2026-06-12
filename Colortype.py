@@ -91,23 +91,30 @@ if uploaded_file is not None:
     face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
     faces = face_cascade.detectMultiScale(cv2.cvtColor(image, cv2.COLOR_BGR2GRAY), 1.1, 5)
 
-    st.sidebar.markdown("---")
-st.sidebar.subheader(" Ручная коррекция")
-st.sidebar.caption("Если автоопределение ошиблось, передвиньте маркеры на фото:")
-skin_x_adj = st.sidebar.slider("Кожа (Влево/Вправо)", -100, 100, 0)
-skin_y_adj = st.sidebar.slider("Кожа (Вверх/Вниз)", -100, 100, 0)
-eye_x_adj = st.sidebar.slider("Глаз (Влево/Вправо)", -100, 100, 0)
-eye_y_adj = st.sidebar.slider("Глаз (Вверх/Вниз)", -100, 100, 0)
-hair_x_adj = st.sidebar.slider("Волосы (Влево/Вправо)", -100, 100, 0)
-hair_y_adj = st.sidebar.slider("Волосы (Вверх/Вниз)", -100, 100, 0)
     if len(faces) > 0:
-        x, y, fw, fh = faces[0]
+            x, y, fw, fh = faces[0]
 
-        # Точные координаты маркеров на лице
-        s_x, s_y = int(x + fw * 0.33) + skin_x_adj, int(y + fh * 0.58) + skin_y_adj
-        e_x, e_y = int(x + fw * 0.32) + eye_x_adj, int(y + fh * 0.40) + eye_y_adj
-        h_x, h_y = int(x + fw * 0.5)+hair_x_adj, max(0, int(y - fh * 0.15) + hair_y_adj)
+            # --- КРАСИВЫЙ БЛОК РУЧНОЙ КОРРЕКЦИИ НА ОСНОВНОЙ СТРАНИЦЕ ---
+            with st.expander("🎯 Ручная коррекция точек (если автоопределение промахнулось)"):
+                st.caption("Передвигайте ползунки, чтобы настроить положение маркеров на фото:")
+                
+                # Создаем две колонки, чтобы на экране телефона ползунки стояли компактно
+                adj_col1, adj_col2 = st.columns(2)
+                
+                with adj_col1:
+                    skin_x_adj = st.slider("Кожа (Влево/Вправо)", -100, 100, 0, key="s_x_slider")
+                    eye_x_adj = st.slider("Глаз (Влево/Вправо)", -100, 100, 0, key="e_x_slider")
+                    hair_x_adj = st.slider("Волосы (Влево/Вправо)", -100, 100, 0, key="h_x_slider")
+                    
+                with adj_col2:
+                    skin_y_adj = st.slider("Кожа (Вверх/Вниз)", -100, 100, 0, key="s_y_slider")
+                    eye_y_adj = st.slider("Глаз (Вверх/Вниз)", -100, 100, 0, key="e_y_slider")
+                    hair_y_adj = st.slider("Волосы (Вверх/Вниз)", -100, 100, 0, key="h_y_slider")
 
+            # --- Точные координаты маркеров на лице ---
+            s_x, s_y = int(x + fw * 0.33) + skin_x_adj, int(y + fh * 0.58) + skin_y_adj
+            e_x, e_y = int(x + fw * 0.32) + eye_x_adj, int(y + fh * 0.40) + eye_y_adj
+            h_x, h_y = int(x + fw * 0.5) + hair_x_adj, max(0, int(y - fh * 0.15) + hair_y_adj)
 
         def get_avg_color(img, cx, cy, r=4):
             cx, cy = max(r, min(w - r, cx)), max(r, min(h - r, cy))
