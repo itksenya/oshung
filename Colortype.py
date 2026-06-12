@@ -34,35 +34,62 @@ import numpy as np
 # 1. Настройка страницы
 st.set_page_config(page_title="Expert AI Stylist", layout="wide")
 st.title(" AI-Стилист: Персональный анализ ")
+# --- УЛУЧШЕННОЕ СКРЫТИЕ СИСТЕМНЫХ ЭЛЕМЕНТОВ ---
 hide_st_style = """
             <style>
-            /* Полностью скрываем верхнюю черную шапку (Deploy, GitHub, Fork) */
-            header, [data-testid="stHeader"], .stAppHeader {
+            /* Скрываем ненужные кнопки в шапке (Deploy, настройки), но сохраняем саму шапку для кнопки меню */
+            [data-testid="stStatusWidget"],
+            [data-testid="stDeployButton"],
+            header [data-testid="stDecoration"],
+            #MainMenu,
+            header .stAppHeader {
                 display: none !important;
             }
             
-            /* Скрываем нижний футер "Made with Streamlit" */
-            footer, [data-testid="stFooter"] {
-                visibility: hidden !important;
-                height: 0px !important;
-                position: absolute !important;
+            /* Делаем фон шапки прозрачным и пропускающим клики, чтобы не мешать контенту */
+            header, [data-testid="stHeader"] {
+                background-color: transparent !important;
+                pointer-events: none !important;
             }
             
-            /* Уменьшаем отступы сверху, чтобы сайт выглядел аккуратно */
-            .block-container {
-                padding-top: 1.5rem !important;
-                padding-bottom: 1.5rem !important;
+            /* Возвращаем кликабельность кнопке открытия бокового меню (стрелочке) */
+            [data-testid="stSidebarCollapseButton"], 
+            [data-testid="stSidebarCollapseButton"] * {
+                pointer-events: auto !important;
             }
             
-            /* Делаем кнопку открытия боковой панели (стрелочку) красивой и заметной */
+            /* Делаем кнопку открытия панели красивой и заметной */
             [data-testid="stSidebarCollapseButton"] {
                 background-color: rgba(255, 255, 255, 0.1) !important;
                 border: 1px solid rgba(255, 255, 255, 0.2) !important;
                 border-radius: 8px !important;
-                transition: background-color 0.3s;
+                color: white !important;
+                margin-top: 8px !important;
+                margin-left: 8px !important;
             }
-            [data-testid="stSidebarCollapseButton"]:hover {
-                background-color: rgba(255, 255, 255, 0.2) !important;
+
+            /* Скрываем нижний футер "Made with Streamlit" */
+            footer, [data-testid="stFooter"] {
+                display: none !important;
+                visibility: hidden !important;
+                height: 0px !important;
+            }
+
+            /* Полностью стираем красную плашку "Hosted with Streamlit" и GitHub-иконку на телефонах */
+            div[class^="viewerBadge"],
+            div[class*="viewerBadge"],
+            [data-testid="stViewerBadge"],
+            .viewerBadge_container__16966,
+            .viewerBadge_link__1z66e {
+                display: none !important;
+                visibility: hidden !important;
+                height: 0px !important;
+            }
+
+            /* Настраиваем аккуратный отступ сверху */
+            .block-container {
+                padding-top: 2rem !important;
+                padding-bottom: 1rem !important;
             }
             </style>
             """
