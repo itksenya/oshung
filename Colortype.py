@@ -68,7 +68,7 @@ hide_st_style = """
             """
 st.markdown(hide_st_style, unsafe_allow_html=True)
 # --- БОКОВАЯ ПАНЕЛЬ ---
-st.sidebar.header("📋 Ваши параметры")
+st.sidebar.header(" Ваши параметры")
 gender = st.sidebar.radio("Пол:", ["Женский", "Мужской"])
 height = st.sidebar.slider("Рост (см):", 140, 210, 165)
 
@@ -78,14 +78,7 @@ if gender == "Женский":
     waist = st.sidebar.number_input("Обхват талии (см):", 40, 130, 60)
     hips = st.sidebar.number_input("Обхват бедер (см):", 60, 150, 89)
 
-st.sidebar.markdown("---")
-st.sidebar.subheader("🎯 Ручная коррекция")
-st.sidebar.caption("Если автоопределение ошиблось, передвиньте маркеры на фото:")
-skin_x_adj = st.sidebar.slider("Кожа (Влево/Вправо)", -100, 100, 0)
-skin_y_adj = st.sidebar.slider("Кожа (Вверх/Вниз)", -100, 100, 0)
-eye_x_adj = st.sidebar.slider("Глаз (Влево/Вправо)", -100, 100, 0)
-eye_y_adj = st.sidebar.slider("Глаз (Вверх/Вниз)", -100, 100, 0)
-hair_y_adj = st.sidebar.slider("Волосы (Вверх/Вниз)", -100, 100, 0)
+
 
 uploaded_file = st.file_uploader("Загрузите селфи (анфас, хорошее естественное освещение)", type=['jpg', 'jpeg', 'png'])
 
@@ -98,13 +91,22 @@ if uploaded_file is not None:
     face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
     faces = face_cascade.detectMultiScale(cv2.cvtColor(image, cv2.COLOR_BGR2GRAY), 1.1, 5)
 
+    st.sidebar.markdown("---")
+st.sidebar.subheader(" Ручная коррекция")
+st.sidebar.caption("Если автоопределение ошиблось, передвиньте маркеры на фото:")
+skin_x_adj = st.sidebar.slider("Кожа (Влево/Вправо)", -100, 100, 0)
+skin_y_adj = st.sidebar.slider("Кожа (Вверх/Вниз)", -100, 100, 0)
+eye_x_adj = st.sidebar.slider("Глаз (Влево/Вправо)", -100, 100, 0)
+eye_y_adj = st.sidebar.slider("Глаз (Вверх/Вниз)", -100, 100, 0)
+hair_x_adj = st.sidebar.slider("Волосы (Влево/Вправо)", -100, 100, 0)
+hair_y_adj = st.sidebar.slider("Волосы (Вверх/Вниз)", -100, 100, 0)
     if len(faces) > 0:
         x, y, fw, fh = faces[0]
 
         # Точные координаты маркеров на лице
         s_x, s_y = int(x + fw * 0.33) + skin_x_adj, int(y + fh * 0.58) + skin_y_adj
         e_x, e_y = int(x + fw * 0.32) + eye_x_adj, int(y + fh * 0.40) + eye_y_adj
-        h_x, h_y = int(x + fw * 0.5), max(0, int(y - fh * 0.15) + hair_y_adj)
+        h_x, h_y = int(x + fw * 0.5)+hair_x_adj, max(0, int(y - fh * 0.15) + hair_y_adj)
 
 
         def get_avg_color(img, cx, cy, r=4):
