@@ -36,9 +36,34 @@ st.set_page_config(page_title="Expert AI Stylist", layout="wide")
 st.title(" AI-Стилист: Персональный анализ ")
 hide_st_style = """
             <style>
-            #MainMenu {visibility: hidden;}
-            footer {visibility: hidden;}
-            header {visibility: hidden;}
+            /* Полностью скрываем верхнюю черную шапку (Deploy, GitHub, Fork) */
+            header, [data-testid="stHeader"], .stAppHeader {
+                display: none !important;
+            }
+            
+            /* Скрываем нижний футер "Made with Streamlit" */
+            footer, [data-testid="stFooter"] {
+                visibility: hidden !important;
+                height: 0px !important;
+                position: absolute !important;
+            }
+            
+            /* Уменьшаем отступы сверху, чтобы сайт выглядел аккуратно */
+            .block-container {
+                padding-top: 1.5rem !important;
+                padding-bottom: 1.5rem !important;
+            }
+            
+            /* Делаем кнопку открытия боковой панели (стрелочку) красивой и заметной */
+            [data-testid="stSidebarCollapseButton"] {
+                background-color: rgba(255, 255, 255, 0.1) !important;
+                border: 1px solid rgba(255, 255, 255, 0.2) !important;
+                border-radius: 8px !important;
+                transition: background-color 0.3s;
+            }
+            [data-testid="stSidebarCollapseButton"]:hover {
+                background-color: rgba(255, 255, 255, 0.2) !important;
+            }
             </style>
             """
 st.markdown(hide_st_style, unsafe_allow_html=True)
