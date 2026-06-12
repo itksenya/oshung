@@ -1,3 +1,39 @@
+# -- Google Analytics (GA4) для Streamlit --
+# Вставьте этот блок в начало вашего app (до st.title и т.д.)
+from streamlit.components.v1 import html
+import streamlit as st
+
+GA_MEASUREMENT_ID = "G-8NXRSMKKRS"  # <- сюда вставь свой Measurement ID (например G-ABCD1234EF)
+
+def inject_ga4(measurement_id: str):
+    """
+    Вставляет клиентский скрипт Google Analytics (gtag.js) в Streamlit страницу.
+    """
+    if not measurement_id or not measurement_id.startswith("G-"):
+        st.warning("Google Analytics: укажите корректный GA4 Measurement ID (начинается с 'G-').")
+        return
+    js = f"""
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id={measurement_id}"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){{dataLayer.push(arguments);}}
+      gtag('js', new Date());
+      gtag('config', '{measurement_id}', {{ 'send_page_view': true }});
+    </script>
+    """
+    # height=0 чтобы не занимать место в макете
+    html(js, height=0)
+
+# Вызов функции — подключаем GA
+inject_ga4(GA_MEASUREMENT_ID)
+import streamlit as st
+import cv2
+import numpy as np
+
+# 1. Настройка страницы
+st.set_page_config(page_title="Expert AI Stylist", layout="wide")
+st.title(" AI-Стилист: Персональный анализ ")
 hide_st_style = """
             <style>
             #MainMenu {visibility: hidden;}
@@ -6,14 +42,6 @@ hide_st_style = """
             </style>
             """
 st.markdown(hide_st_style, unsafe_allow_html=True)
-import streamlit as st
-import cv2
-import numpy as np
-
-# 1. Настройка страницы
-st.set_page_config(page_title="Expert AI Stylist", layout="wide")
-st.title(" AI-Стилист: Персональный анализ ")
-
 # --- БОКОВАЯ ПАНЕЛЬ ---
 st.sidebar.header("📋 Ваши параметры")
 gender = st.sidebar.radio("Пол:", ["Женский", "Мужской"])
