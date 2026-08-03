@@ -30,6 +30,7 @@ inject_ga4(GA_MEASUREMENT_ID)
 import streamlit as st
 import cv2
 import numpy as np
+import os
 
 # 1. Настройка страницы
 st.set_page_config(page_title="Expert AI Stylist", layout="wide")
@@ -109,13 +110,34 @@ if gender == "Женский":
 
 uploaded_file = st.file_uploader("Загрузите селфи (анфас, хорошее естественное освещение)", type=['jpg', 'jpeg', 'png'])
 
+
+def load_face_cascade():
+    """Загружает Haar-каскад и показывает понятную ошибку при битом OpenCV."""
+    cascade_classifier = getattr(cv2, "CascadeClassifier", None)
+    haarcascades_dir = getattr(getattr(cv2, "data", None), "haarcascades", None)
+
+    if cascade_classifier is None or not haarcascades_dir:
+        st.error(
+            "OpenCV установлен некорректно: cv2.CascadeClassifier недоступен. "
+            "Переустановите только opencv-python-headless==4.11.0.86."
+        )
+        st.stop()
+
+    cascade_path = os.path.join(haarcascades_dir, "haarcascade_frontalface_default.xml")
+    face_cascade = cascade_classifier(cascade_path)
+    if face_cascade.empty():
+        st.error(f"Не удалось загрузить каскад распознавания лица: {cascade_path}")
+        st.stop()
+
+    return face_cascade
+
 if uploaded_file is not None:
     file_bytes = np.asarray(bytearray(uploaded_file.read()), dtype=np.uint8)
     image = cv2.imdecode(file_bytes, 1)
     image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     h, w, _ = image_rgb.shape
 
-    face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+    face_cascade = load_face_cascade()
     faces = face_cascade.detectMultiScale(cv2.cvtColor(image, cv2.COLOR_BGR2GRAY), 1.1, 5)
 
     if len(faces) > 0:
