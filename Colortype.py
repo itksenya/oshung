@@ -1,39 +1,56 @@
-# -- Google Analytics (GA4) для Streamlit --
-# Вставьте этот блок в начало вашего app (до st.title и т.д.)
-from streamlit.components.v1 import html
-import streamlit as st
+import os
+import re
 
-GA_MEASUREMENT_ID = "G-8NXRSMKKRS"  # <- сюда вставь свой Measurement ID (например G-ABCD1234EF)
-
-def inject_ga4(measurement_id: str):
-    """
-    Вставляет клиентский скрипт Google Analytics (gtag.js) в Streamlit страницу.
-    """
-    if not measurement_id or not measurement_id.startswith("G-"):
-        st.warning("Google Analytics: укажите корректный GA4 Measurement ID (начинается с 'G-').")
-        return
-    js = f"""
-    <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id={measurement_id}"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){{dataLayer.push(arguments);}}
-      gtag('js', new Date());
-      gtag('config', '{measurement_id}', {{ 'send_page_view': true }});
-    </script>
-    """
-    # height=0 чтобы не занимать место в макете
-    html(js, height=0)
-
-# Вызов функции — подключаем GA
-inject_ga4(GA_MEASUREMENT_ID)
-import streamlit as st
 import cv2
 import numpy as np
-import os
+import streamlit as st
+
+
+GA_MEASUREMENT_ID = os.getenv("GA_MEASUREMENT_ID", "G-8NXRSMKKRS").strip()
+
+
+def inject_ga4(measurement_id: str):
+    """Adds Google Analytics 4 tag to the Streamlit page once."""
+    if not re.fullmatch(r"G-[A-Z0-9]+", measurement_id):
+        st.warning(
+            "Google Analytics: укажите корректный GA4 Measurement ID "
+            "(начинается с 'G-')."
+        )
+        return
+
+    js = f"""
+    <script>
+      (() => {{
+        const measurementId = "{measurement_id}";
+        const scriptId = `ga4-${{measurementId}}`;
+
+        if (document.getElementById(scriptId)) return;
+
+        window.dataLayer = window.dataLayer || [];
+        window.gtag = window.gtag || function() {{
+          window.dataLayer.push(arguments);
+        }};
+
+        const script = document.createElement("script");
+        script.id = scriptId;
+        script.async = true;
+        script.src = `https://www.googletagmanager.com/gtag/js?id=${{measurementId}}`;
+        document.head.appendChild(script);
+
+        window.gtag("js", new Date());
+        window.gtag("config", measurementId, {{
+          page_location: window.location.href,
+          page_title: document.title,
+          send_page_view: true
+        }});
+      }})();
+    </script>
+    """
+    st.html(js, unsafe_allow_javascript=True)
 
 # 1. Настройка страницы
 st.set_page_config(page_title="Expert AI Stylist", layout="wide")
+inject_ga4(GA_MEASUREMENT_ID)
 st.title(" AI-Стилист: Персональный анализ ")
 # --- УЛУЧШЕННОЕ СКРЫТИЕ СИСТЕМНЫХ ЭЛЕМЕНТОВ ---
 hide_st_style = """
