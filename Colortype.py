@@ -161,7 +161,7 @@ if uploaded_file is not None:
             x, y, fw, fh = faces[0]
 
             # --- КРАСИВЫЙ БЛОК РУЧНОЙ КОРРЕКЦИИ НА ОСНОВНОЙ СТРАНИЦЕ ---
-            with st.expander("🎯 Ручная коррекция точек (если автоопределение промахнулось)"):
+            with st.expander("Ручная коррекция точек (если автоопределение промахнулось)"):
                 st.caption("Передвигайте ползунки, чтобы настроить положение маркеров на фото:")
                 
                 # Создаем две колонки, чтобы на экране телефона ползунки стояли компактно
@@ -338,14 +338,14 @@ if uploaded_file is not None:
             with col_res1:
                 st.image(preview, use_container_width=True)
             with col_res2:
-                st.markdown(f"### 🎨 Цветотип: **{color_type}**")
+                st.markdown(f"### Цветотип: **{color_type}**")
                 st.write(color_desc)
     
-                st.markdown(f"### 👤 Типаж внешности: **{kibbe_type}**")
+                st.markdown(f"### Типаж внешности: **{kibbe_type}**")
                 st.write(kibbe_desc)
     
                 if gender == "Женский":
-                    st.markdown(f"### 📐 Тип фигуры: **{body_type}**")
+                    st.markdown(f"### Тип фигуры: **{body_type}**")
                     st.write(body_desc)
     
                 # Извлеченная палитра
@@ -365,7 +365,7 @@ if uploaded_file is not None:
                     st.image(r3, caption="Волосы", width=50)
     
             st.write("---")
-            st.subheader("📊 Помогите нам стать лучше")
+            st.subheader("Помогите нам стать лучше")
             feedback = st.radio(
                 "Подходит ли вам данное описание типа внешности, фигуры и цветотипа?",
                 ["Да, абсолютно точно!", "Частично совпадает", "Нет, совсем не про меня"],
@@ -378,7 +378,7 @@ if uploaded_file is not None:
     
             # --- СЕКЦИИ РЕКОМЕНДАЦИЙ (ДЛЯ ЗАПОЛНЕНИЯ) ---
             st.write("---")
-            st.subheader("💡 Персональные рекомендации")
+            st.subheader("Персональные рекомендации")
     
             # 1. СТИЛЬ ОДЕЖДЫ
             with st.expander(" Подобрать стиль в одежде"):
